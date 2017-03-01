@@ -1,6 +1,6 @@
 # Ansible-Network
 
-Vagrant + Ansible to automatically display the network shown with all the included services. All the machines have netdata installed to monitor all services and usage for each of them one.
+Vagrant + Ansible to automatically display the network shown with all the included services. All the machines have netdata installed to monitor all services and usage for each one of them.
 
 ![alt tag](https://i.gyazo.com/e76d140832982c61365daa4f7f35436e.png)
 
@@ -22,11 +22,11 @@ During the installation ansible will prompt a series of variables for futher cus
       
       LDAP domain: dc=nodomain
 
-      To access LDAP server from remote client use the IP assinged by DHCP and cn=admin,dc=nodomain. 
-      Password to LDAP admin will be the one specified by the user during installation.
+      To access LDAP server from a remote client use the IP assinged by DHCP and cn=admin,dc=nodomain. 
+      The password for LDAP admin will be the one specified by the user during installation.
             
       Netdata: 
-      This should only be needed once since netdata will save into my-netdata all theses ports along each hostname.
+      This should only be needed once, since netdata will save each hostname to my-netdata with it's correspondent IP.
       
                HAProxyIP:19999 --> HAProxy netdata
                HAProxyIP:19990 --> Moodle netdata
