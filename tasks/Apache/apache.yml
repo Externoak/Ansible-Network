@@ -1,0 +1,39 @@
+---
+- apt_repository:
+    repo: 'ppa:ondrej/php'
+
+- name: Install requeriments
+  apt: name="{{ item }}"
+  with_items:
+    - php5.6
+    - php5.6-dev
+    - php5.6-mysql
+    - php5.6-curl
+    - php5.6-ldap
+    - apache2
+    - php5.6-xml
+    - php5.6-xmlrpc
+    - mysql-client
+    - php-zip
+    - php5.6-zip
+
+- unarchive:
+    src: html.tar.gz
+    dest: /var/www/
+
+- replace:
+    dest=/var/www/html/php/conecta.php
+    regexp='192.168.8.124'
+    replace='192.168.80.5'
+
+- replace:
+    dest=/var/www/html/php/conecta.php
+    regexp='dario'
+    replace='vagrant'
+
+- name: Restarting apache
+  service:
+    name: apache2
+    state: restarted
+
+

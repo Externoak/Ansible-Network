@@ -1,0 +1,148 @@
+---
+- hosts: Mysql1:Mysql2
+  become: true
+  vars_prompt:
+
+    - name: "TBUSER"
+      prompt: "Enter user name for mysql table"
+      private: no
+
+    - name: "TBPASS"
+      prompt: "Enter user password"
+      private: no
+
+  tasks:
+        - name: actualizando la cache de apt
+          apt: update_cache=yes
+
+        - name: Installing Packets
+          apt: name={{ item }} update_cache=yes state=present
+          with_items:
+          - mysql-server
+          - python-mysqldb
+
+        - name: Creating database
+          mysql_db:
+            name: vsftpd
+            state: present
+
+        - copy:
+            src: pueblosmalaga.sql
+            dest: /tmp/pueblosmalaga.sql
+
+        - name: Import .sql 
+          mysql_db:
+            state: import
+            name: dbmalaga
+            target: /tmp/pueblosmalaga.sql
+        
+        - name: Creating moodle database
+          mysql_db:
+            name: moodle
+            state: present
+
+        - mysql_user:
+             name: vagrant
+             password: vagrant
+             host: 192.168.80.3
+             priv: 'vsftpd.*:ALL'
+             state: present
+
+        - mysql_user:
+             name: vagrant
+             password: vagrant
+             host: '%' 
+             priv: '*.*:ALL'
+             state: present
+
+        - mysql_user:
+             name: moodle
+             password: moodle
+             host: '%' 
+             priv: '*.*:ALL'
+             state: present
+
+        - name: create the replication users
+          mysql_user: 
+            name: repli 
+            host: '%' 
+            password: repli
+            priv: '*.*:REPLICATION SLAVE' 
+            state: present
+
+        - replace:
+            dest=/etc/mysql/my.cnf
+            regexp='127.0.0.1'
+            replace='0.0.0.0'
+
+        - name: add a string to the new file
+          lineinfile: dest=/etc/mysql/my.cnf
+                regexp='^'
+                line='relay-log = /var/log/mysql/mysql-relay-bin.log'
+                state=present
+          when: inventory_hostname == "Mysql1"
+
+        - replace:
+            dest=/etc/mysql/my.cnf
+            regexp='#server-id'
+            replace='server-id'
+          when: inventory_hostname == "Mysql1"
+
+        - replace:
+            dest=/etc/mysql/my.cnf
+            regexp='#server-id		= 1'
+            replace='server-id		= 2'
+          when: inventory_hostname == "Mysql2"
+
+        - replace:
+            dest=/etc/mysql/my.cnf
+            regexp='#log_bin'
+            replace='log_bin'
+
+        - replace:
+            dest=/etc/mysql/my.cnf
+            regexp='#binlog_do_db		= include_database_name'
+            replace='binlog_do_db		= dbmalaga'
+
+        - name: Restarting mysql
+          service:
+            name: mysql
+            state: restarted
+
+        - name: Create table in database
+          command: mysql -u vagrant -pvagrant -D vsftpd -e 'CREATE TABLE user(id int not null auto_increment PRIMARY KEY, user varchar(30) not null,pass varchar(50) not null);'
+
+        - name: Create user in database
+          command: mysql -u vagrant -pvagrant -D vsftpd -e 'INSERT INTO user(user,pass) VALUES ("{{TBUSER}}",password("{{TBPASS}}"));'
+
+        - name: Create haproxy user
+          command: mysql -u vagrant -pvagrant -e "INSERT INTO mysql.user (Host,User) values ('192.168.80.2','haproxy_check'); FLUSH PRIVILEGES;"
+
+
+        - mysql_replication:
+            mode: stopslave
+
+        - mysql_replication:
+            mode: getslave
+          when: inventory_hostname == "Mysql1"
+
+
+        - name: get the current master servers replication status
+          mysql_replication: 
+            mode: getmaster
+          register: repl_stat
+          when: inventory_hostname == "Mysql1"
+
+        - name: change the master in slave to start the replication
+          mysql_replication: 
+            mode=changemaster
+            master_host=192.168.80.5
+            master_user=vagrant
+            master_password=vagrant
+            master_log_file={{ repl_stat.File }}
+            master_log_pos={{ repl_stat.Position }}
+          when: inventory_hostname == "Mysql1"
+
+        - name: start replication
+          mysql_replication: mode=startslave
+          when: inventory_hostname == "Mysql1"

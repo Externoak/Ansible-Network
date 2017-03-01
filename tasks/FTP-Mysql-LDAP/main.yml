@@ -1,0 +1,19 @@
+---
+- hosts: ftpserver
+  become: true
+
+  vars_prompt:
+
+    - name: "FTPBANNER"
+      prompt: "Enter banner for FTP"
+      private: no
+
+    - name: "LDAPPASS"
+      prompt: "Enter LDAP password (Must be the same as later on!)"
+      private: no
+
+  tasks:
+        - name: actualizando la cache de apt
+          apt: update_cache=yes
+
+        - include: ftp.yml

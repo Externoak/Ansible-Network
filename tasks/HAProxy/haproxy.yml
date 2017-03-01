@@ -1,0 +1,38 @@
+- name: Config Languague
+  command: locale-gen es_ES.UTF-8
+
+- name: Install Haproxy
+  apt: name={{ item }} update_cache=yes state=present
+  with_items:
+  - haproxy
+
+- replace:
+    dest=/etc/default/haproxy
+    regexp='ENABLED=0'
+    replace='ENABLED=1'
+    backup=yes
+
+- name: Copying HAProxy Conf
+  copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Starting Haproxy
+  service:
+    name: haproxy
+    state: restarted
+
+- name: Copying Iptables
+  copy:
+    src: iptables.py
+    dest: /etc/iptables.py
+
+- name: IPtables to rc.local
+  blockinfile:
+    dest: /etc/rc.local
+    insertbefore: "exit"
+    block: |
+       python /etc/iptables.py
+
+- name: Running IPtables
+  shell: /etc/rc.local

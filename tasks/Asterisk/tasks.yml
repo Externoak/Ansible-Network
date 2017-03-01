@@ -1,0 +1,7 @@
+---
+- hosts: Asterisk1:Asterisk2
+
+  become: true
+  tasks:
+
+    - include: asterisk.yml

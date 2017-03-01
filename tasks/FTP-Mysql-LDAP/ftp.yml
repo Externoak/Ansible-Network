@@ -1,0 +1,112 @@
+- name: Config Languague
+  command: locale-gen es_ES.UTF-8
+
+- name: Installing Packets
+  apt: name={{ item }} update_cache=yes state=present
+  with_items:
+  - vsftpd
+  - openjdk-7-jre
+  - mysql-client
+  - unzip
+  - libpam-mysql
+  - libnss-ldap
+
+- replace:
+    dest=/etc/ldap/ldap.conf
+    regexp='#BASE   dc=example,dc=com'
+    replace='BASE    dc=nodomain'
+
+- replace:
+    dest=/etc/ldap/ldap.conf
+    regexp='#URI    ldap://ldap.example.com ldap://ldap-master.example.com:666'
+    replace='URI     ldap://192.168.80.6:389'
+
+- replace:
+    dest=/etc/vsftpd.conf
+    regexp='#local_enable=YES'
+    replace='local_enable=YES'
+
+- replace:
+    dest=/etc/vsftpd.conf
+    regexp='#write_enable=YES'
+    replace='write_enable=YES'
+
+- replace:
+    dest=/etc/vsftpd.conf
+    regexp='#ftpd_banner=Welcome to blah FTP service.'
+    replace='ftpd_banner={{FTPBANNER}}'
+
+- file:
+    path: /etc/pam.d/vsftpd
+    state: absent
+
+- file:
+    path: /etc/pam.d/vsftpd
+    state: touch
+
+- name: pam.d for vsftpd
+  blockinfile:
+    dest: /etc/pam.d/vsftpd
+    block: |
+      session required pam_limits.so
+      account required pam_permit.so
+      auth required pam_ldap.so
+
+- file:
+    path: /etc/pam_ldap.conf
+    state: absent
+
+- file:
+    path: /etc/pam_ldap.conf
+    state: touch
+
+
+- name: ldap.conf
+  blockinfile:
+    dest: /etc/pam_ldap.conf
+    block: |
+      base dc=nodomain
+      uri ldap://192.168.80.6:389
+      ldap_version 3
+      binddn cn=admin,dc=nodomain
+      bindpw {{LDAPPASS}}
+
+- file:
+    path: /var/www
+    state: directory
+    mode: 0755
+
+- user:
+    name: vsftpd
+    home: /var/www/ftp/
+    shell: /bin/false
+
+- name: Creates directory
+  file: path=/var/www/ftp/ansible state=directory owner=vsftpd mode=0775 recurse=yes
+
+- name: mysql on vsftpd
+  blockinfile:
+    dest: /etc/vsftpd.conf
+    block: |
+       nopriv_user=vsftpd
+       guest_enable=YES
+       guest_username=vsftpd
+       local_root=/var/www/ftp/$USER
+       user_sub_token=$USER
+       virtual_use_local_privs=YES
+
+
+- name: Restarting vsftpd
+  service:
+    name: vsftpd
+    state: restarted
+
+- name: Downloading Openfire
+  get_url:
+    url: https://www.igniterealtime.org/downloadServlet?filename=openfire/openfire_4.1.3_all.deb
+    dest: /tmp/openfire.deb
+    validate_certs: no
+
+- name: Install Openfire
+  apt:
+    deb: /tmp/openfire.deb

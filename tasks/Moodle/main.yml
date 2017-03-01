@@ -1,0 +1,7 @@
+---
+- hosts: Moodle
+  become: true
+
+  tasks:
+
+        - include: moodle.yml

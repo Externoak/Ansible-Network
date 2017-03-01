@@ -1,0 +1,111 @@
+---
+- hosts: ldap
+  become: true
+
+  vars_prompt:
+
+    - name: "PASS"
+      prompt: "Enter LDAP admin password (MUST BE THE SAME AS BEFORE!): "
+      private: no
+
+    - name: "USER"
+      prompt: "Enter LDAP user name: "
+      private: no
+
+    - name: "USERPASS"
+      prompt: "Enter LDAP user password: "
+      private: no
+
+
+  tasks:
+
+   - name: Config Languague
+     command: locale-gen es_ES.UTF-8
+ 
+   - name: Install OpenLDAP packages
+     apt:
+       name: '{{ item }}'
+       state: 'latest'
+       install_recommends: False
+     with_items: [ 'slapd', 'ldap-utils', 'python-ldap', 'python3-setuptools', 'python-setuptools' ]
+
+   - name: Install pexpect for Ansible
+     command: easy_install pexpect
+
+   - name: Creating password
+     command: slappasswd -s {{PASS}}
+     register: PASSHASH
+
+   - name: Set ldap admin password
+     blockinfile:
+      dest: /tmp/pass.ldif
+      create: yes
+      block: |
+         dn: olcDatabase={1}hdb,cn=config
+         changetype: modify
+         replace: olcRootPW
+         olcRootPW: {{PASSHASH.stdout}}
+         -
+
+         dn: olcDatabase={0}config,cn=config
+         changetype: modify
+         replace: olcRootPW
+         olcRootPW: {{PASSHASH.stdout}}    
+   
+   - name: pass.ldif
+     command: ldapadd -Y EXTERNAL -H ldapi:/// -f /tmp/pass.ldif
+
+   - name: Config user.ldif
+     template:
+      src=user.ldif.j2
+      dest=/tmp/user.ldif
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'dn: uid=Prueba'
+       replace: 'dn: uid={{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'uid: Prueba'
+       replace: 'uid: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'sn: Prueba'
+       replace: 'sn: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'givenName: Prueba'
+       replace: 'givenName: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'cn: Prueba'
+       replace: 'cn: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'displayName: Prueba'
+       replace: 'displayName: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'gecos: Prueba'
+       replace: 'gecos: {{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'homeDirectory: /home/users/Prueba'
+       replace: 'homeDirectory: /home/users/{{USER}}'
+
+   - replace:
+       dest: /tmp/user.ldif
+       regexp: 'userPassword: Prueba'
+       replace: 'userPassword: {{USER}}'
+
+   - expect:
+       command: ldapadd -x -D cn=admin,dc=nodomain -W -f /tmp/user.ldif
+       responses:
+          (?i)assword: "{{PASS}}"

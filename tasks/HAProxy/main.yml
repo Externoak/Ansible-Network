@@ -1,0 +1,7 @@
+---
+- hosts: HAProxy
+  become: true
+
+  tasks:      
+
+        - include: haproxy.yml

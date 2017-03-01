@@ -1,0 +1,41 @@
+- name: Install Asterisk
+  apt: name={{ item }} update_cache=yes state=present
+  with_items:
+  - asterisk
+
+- name: Stopping asterisk
+  service:
+    name: asterisk
+    state: stopped
+
+- name: copy files
+  command: cp -r /tmp/asterisk/{{ item }} /etc/asterisk/
+  with_items:
+   - "sip.conf"
+   - "extensions.conf"
+   - "queues.conf"
+   - "modules.conf"
+   - "iax.conf"
+   - "voicemail.conf"
+
+- name: copy main server
+  command: cp -r /tmp/asterisk/{{ item }} /etc/asterisk/iax.conf
+  with_items:
+  - "iax2.conf"
+  when: inventory_hostname == "Asterisk2"
+
+- unarchive:
+    src: https://www.voipnovatos.es/voces/voipnovatos-extra-sounds-es-alaw-1.4.tar.gz
+    dest: /usr/share/asterisk/sounds/
+    remote_src: True
+
+- unarchive:
+    src: https://www.voipnovatos.es/voces/voipnovatos-core-sounds-es-alaw-1.4.tar.gz
+    dest: /usr/share/asterisk/sounds/
+    remote_src: True
+
+
+- name: Restarting asterisk
+  service:
+    name: asterisk
+    state: started
