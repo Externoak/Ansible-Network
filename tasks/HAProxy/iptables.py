@@ -23,6 +23,9 @@ os.system('iptables -A FORWARD -i ' + Red + ' -o ' + Green + ' -m state --state 
 os.system('iptables -A FORWARD -i ' + Red + ' -o '+ Green +' -j ACCEPT')
 os.system('iptables -t nat -A POSTROUTING -o '+ Green +' -j MASQUERADE')
 os.system('iptables -A FORWARD -i ' + Green + '  -o '+ Red +'  -m state --state ESTABLISHED,RELATED -j ACCEPT')
+#FTP
+os.system('iptables -t nat -A PREROUTING -i ' + Red +' -p tcp --dport 20:21 -j DNAT --to 192.168.80.3:20-21')
+os.system('iptables -t nat -A PREROUTING -i ' + Red +' -p tcp --dport 10000:10250 -j DNAT --to 192.168.80.3:10000-10250')
 #Openfire
 os.system('iptables -t nat -A PREROUTING -i ' + Red +' -p tcp --dport 9090 -j DNAT --to 192.168.80.3:9090')
 os.system('iptables -t nat -A PREROUTING -i ' + Red +' -p tcp --dport 9091 -j DNAT --to 192.168.80.3:9091')

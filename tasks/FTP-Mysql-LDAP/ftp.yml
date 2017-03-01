@@ -84,7 +84,7 @@
 - name: Creates directory
   file: path=/var/www/ftp/ansible state=directory owner=vsftpd mode=0775 recurse=yes
 
-- name: mysql on vsftpd
+- name: mysql and pasivemode on vsftpd
   blockinfile:
     dest: /etc/vsftpd.conf
     block: |
@@ -94,7 +94,13 @@
        local_root=/var/www/ftp/$USER
        user_sub_token=$USER
        virtual_use_local_privs=YES
-
+       pasv_address=192.168.80.2
+       pasv_enable=YES
+       pasv_promiscuous=YES
+       port_enable=YES
+       port_promiscuous=YES
+       pasv_min_port=10000
+       pasv_max_port=10250
 
 - name: Restarting vsftpd
   service:
