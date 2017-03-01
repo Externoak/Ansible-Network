@@ -56,6 +56,7 @@ During the installation ansible will prompt a series of variables for futher cus
                HAProxyIP:5060 --> Asterisk
                HAProxyIP:5222 --> Openfire
                HAProxyIP:389 --> LDAP
+               HAProxyIP:21 --> FTP
                
                
                
