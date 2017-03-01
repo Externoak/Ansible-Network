@@ -17,7 +17,6 @@ Vagrant.configure("2") do |config|
       config.vm.box = "ubuntu/trusty64"
       config.vm.hostname = "Moodle"
 
-      config.vm.network :"public_network"
       config.vm.network "private_network", ip: "192.168.80.10"
 
 
@@ -31,7 +30,6 @@ Vagrant.configure("2") do |config|
       config.vm.box = "ubuntu/trusty64"
       config.vm.hostname = "Apache1"
 
-      config.vm.network :"public_network"
       config.vm.network "private_network", ip: "192.168.80.80"
 
 
@@ -45,7 +43,6 @@ Vagrant.configure("2") do |config|
       config.vm.box = "ubuntu/trusty64"
       config.vm.hostname = "Apache2"
 
-      config.vm.network :"public_network"
       config.vm.network "private_network", ip: "192.168.80.81"
 
 
@@ -59,7 +56,6 @@ Vagrant.configure("2") do |config|
       config.vm.box = "ubuntu/trusty64"
       config.vm.hostname = "Asterisk1"
 
-      config.vm.network :"public_network"
       config.vm.network "private_network", ip: "192.168.80.20"
       config.vm.synced_folder "tasks/Asterisk/asterisk", "/tmp/asterisk"
 
@@ -73,7 +69,6 @@ Vagrant.configure("2") do |config|
       config.vm.box = "ubuntu/trusty64"
       config.vm.hostname = "Asterisk2"
 
-      config.vm.network :"public_network"
       config.vm.network "private_network", ip: "192.168.80.21"
       config.vm.synced_folder "tasks/Asterisk/asterisk", "/tmp/asterisk"
 
@@ -88,7 +83,6 @@ Vagrant.configure("2") do |config|
     ftpserver.vm.box = "debian/wheezy64"
     ftpserver.vm.hostname = "ftpserver"
 
-    ftpserver.vm.network :"public_network"
     ftpserver.vm.network "private_network", ip: "192.168.80.3"
 
    ftpserver.vm.provider :virtualbox do |v|
@@ -101,7 +95,6 @@ Vagrant.configure("2") do |config|
     db.vm.box = "debian/wheezy64"
     db.vm.hostname = "Mysql1"
 
-    db.vm.network :"public_network"
     db.vm.network "private_network", ip: "192.168.80.4"
 
    db.vm.provider :virtualbox do |v|
@@ -113,7 +106,6 @@ Vagrant.configure("2") do |config|
     db.vm.box = "debian/wheezy64"
     db.vm.hostname = "Mysql2"
 
-    db.vm.network :"public_network"
     db.vm.network "private_network", ip: "192.168.80.5"
 
    db.vm.provider :virtualbox do |v|
@@ -125,7 +117,6 @@ Vagrant.configure("2") do |config|
     ldap.vm.box = "ubuntu/trusty64"
     ldap.vm.hostname = "ldap"
 
-    ldap.vm.network :"public_network"
     ldap.vm.network "private_network", ip: "192.168.80.6"
 
    ldap.vm.provider :virtualbox do |v|
