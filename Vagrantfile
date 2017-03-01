@@ -125,6 +125,6 @@ Vagrant.configure("2") do |config|
     end
   end
   config.vm.provision :ansible do |ansible|
-    ansible.playbook = "tasks/a.yml"
+    ansible.playbook = "tasks/netdata.yml"
   end
 end
