@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
 
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "HAProxy"]
       end
     end
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
 
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "Moodle"]
       end
     end
@@ -34,7 +34,7 @@ Vagrant.configure("2") do |config|
 
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "Apache1"]
       end
     end
@@ -47,7 +47,7 @@ Vagrant.configure("2") do |config|
 
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "Apache2"]
       end
     end
@@ -60,7 +60,7 @@ Vagrant.configure("2") do |config|
       config.vm.synced_folder "tasks/Asterisk/asterisk", "/tmp/asterisk"
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "Asterisk1"]
       end
     end
@@ -74,7 +74,7 @@ Vagrant.configure("2") do |config|
 
 
      config.vm.provider :virtualbox do |v|
-        v.customize ["modifyvm", :id, "--memory", 512]
+        v.customize ["modifyvm", :id, "--memory", 1024]
         v.customize ["modifyvm", :id, "--name", "Asterisk2"]
       end
     end
@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
     ftpserver.vm.network "private_network", ip: "192.168.80.3"
 
    ftpserver.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--memory", 1024]
       v.customize ["modifyvm", :id, "--name", "ftpserver"]
     end
   end
@@ -98,7 +98,7 @@ Vagrant.configure("2") do |config|
     db.vm.network "private_network", ip: "192.168.80.4"
 
    db.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--memory", 1024]
       v.customize ["modifyvm", :id, "--name", "Mysql1"]
     end
   end
@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
     db.vm.network "private_network", ip: "192.168.80.5"
 
    db.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--memory", 1024]
       v.customize ["modifyvm", :id, "--name", "Mysql2"]
     end
   end
@@ -120,7 +120,7 @@ Vagrant.configure("2") do |config|
     ldap.vm.network "private_network", ip: "192.168.80.6"
 
    ldap.vm.provider :virtualbox do |v|
-      v.customize ["modifyvm", :id, "--memory", 512]
+      v.customize ["modifyvm", :id, "--memory", 1024]
       v.customize ["modifyvm", :id, "--name", "ldap"]
     end
   end
