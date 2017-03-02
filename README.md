@@ -40,8 +40,9 @@ During the installation ansible will prompt a series of variables for futher cus
                HAProxyIP:19998 --> LDAP netdata
                
        Web browser:
-               HAProxyIP
-               By default (port 80) it will load balance between both apache servers.
+       
+               HAProxyIP:8080/haproxyadmin?stats
+               By default (port 80) will load balance between both apache servers.
                
                HAProxyIP/moodle
                To access Moodle.
