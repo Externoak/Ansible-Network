@@ -6,6 +6,7 @@
   apt: name="{{ item }}"
   with_items:
     - git
+    - unzip
     - php5.6
     - php5.6-dev
     - php5.6-mysql
@@ -31,11 +32,11 @@
     name: apache2
     state: restarted
 
-- git:
-    repo: git://git.moodle.org/moodle.git
-    dest: /opt/moodle
-    clone: yes
-    force: yes
+- name: Downloading Moodle 3.2
+  unarchive:
+    src: https://download.moodle.org/download.php/direct/stable32/moodle-latest-32.zip
+    dest: /opt/
+    remote_src: True
 
 - name: Copying moodle
   command: cp -R /opt/moodle /var/www/html

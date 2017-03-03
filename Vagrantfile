@@ -4,7 +4,7 @@ Vagrant.configure("2") do |config|
       config.vm.hostname = "HAProxy"
 
       config.vm.network "private_network", ip: "192.168.80.2"
-      config.vm.network :"public_network"
+      config.vm.network :"public_network", ip: "192.168.8.209"
 
 
      config.vm.provider :virtualbox do |v|

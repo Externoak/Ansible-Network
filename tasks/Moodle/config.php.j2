@@ -54,13 +54,12 @@ $CFG->dboptions = array(
                                 //  if you set it to 'true' or custom path
                                 //  here set dbhost to 'localhost',
                                 //  (please note mysql is always using socket
-                                //  if dbhost is 'localhost' - if you need
+    'dbcollation' => 'utf8_unicode_ci', // This is the important line to add.                          $
                                 //  local port connection use '127.0.0.1')
-    'dbport'    => '',          // the TCP port number to use when connecting
+    'dbport'    => '3306',          // the TCP port number to use when connecting
                                 //  to the server. keep empty string for the
                                 //  default port
 );
-
 
 //=========================================================================
 // 2. WEB SITE LOCATION

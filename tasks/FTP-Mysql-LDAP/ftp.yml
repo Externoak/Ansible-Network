@@ -10,6 +10,9 @@
   - unzip
   - libpam-mysql
   - libnss-ldap
+  - python3-setuptools
+  - python3
+  - python-setuptools
 
 - replace:
     dest=/etc/ldap/ldap.conf
@@ -84,6 +87,24 @@
 - name: Creates directory
   file: path=/var/www/ftp/ansible state=directory owner=vsftpd mode=0775 recurse=yes
 
+- name: Install pexpect for Ansible
+  command: easy_install pexpect
+
+- expect:
+    command: ssh vagrant@192.168.80.2 "ip -4 addr show eth2 | grep -oP '(?<=inet\s)\d+(\.\d+){3}'" > /tmp/iphaproxy.txt
+    responses:
+        (?i)re you sure you want to continue connecting (yes/no)?: "yes /n"
+        (?i)password: "vagrant"
+
+- expect:
+    command: scp vagrant@192.168.80.2:/tmp/iphaproxy.txt /tmp/iphaproxy.txt
+    responses:
+        (?i)password: "vagrant"
+
+- name: Read IP
+  shell: cat /tmp/iphaproxy.txt
+  register: IP
+
 - name: mysql and pasivemode on vsftpd
   blockinfile:
     dest: /etc/vsftpd.conf
@@ -94,7 +115,7 @@
        local_root=/var/www/ftp/$USER
        user_sub_token=$USER
        virtual_use_local_privs=YES
-       pasv_address=192.168.80.2
+       pasv_address={{ IP.stdout }}
        pasv_enable=YES
        pasv_promiscuous=YES
        port_enable=YES
