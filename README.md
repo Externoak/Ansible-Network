@@ -59,6 +59,10 @@ During the installation ansible will prompt a series of variables for futher cus
                HAProxyIP:389 --> LDAP
                HAProxyIP:21 --> FTP
                
+      Inside the Management folder various usefull scripts to manage the diferent services shall be found.
+               
+  
+               
                
                
                
