@@ -1,0 +1,38 @@
+---
+- hosts: ldap
+  become: true
+
+  vars_prompt:
+
+    - name: "LDAPPASS"
+      prompt: "Enter LDAP admin password "
+      private: no
+
+    - name: "USER"
+      prompt: "Enter LDAP user name "
+      private: no
+
+    - name: "PASS"
+      prompt: "Enter LDAP user password "
+      private: no
+
+  tasks:
+
+    - name: HASHING password
+      command: slappasswd -s {{PASS}}
+      register: PASSHASH
+
+    - name: Adding user 
+      ldap_entry:
+        dn: uid={{USER}},ou=user,dc=nodomain
+        objectClass:
+          - inetOrgPerson
+          - shadowAccount
+        attributes:
+          sn: "{{USER}}"
+          cn: "{{USER}}"
+          displayName: "{{USER}}"
+          description: User {{USER}} added via Playbook newuser
+          userPassword: "{{PASSHASH.stdout}}"
+        bind_dn: cn=admin,dc=nodomain
+        bind_pw: "{{LDAPPASS}}"

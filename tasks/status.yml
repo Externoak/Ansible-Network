@@ -1,0 +1,93 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Checking HAProxy status
+      command: service haproxy status 
+      register: haproxystat
+      when: inventory_hostname == "HAProxy"
+
+    - debug:
+        msg: "{{haproxystat.stdout}}"
+      when: inventory_hostname == "HAProxy"
+
+    - name: Checking Apache1 status
+      command: service apache2 status 
+      register: apache1stat
+      when: inventory_hostname == "Apache1"
+
+    - debug:
+        msg: "{{apache1stat.stdout}}"
+      when: inventory_hostname == "Apache1"
+
+    - name: Checking Apache2 status
+      command: service apache2 status 
+      register: apache2stat
+      when: inventory_hostname == "Apache2"
+
+    - debug:
+        msg: "{{apache2stat.stdout}}"
+      when: inventory_hostname == "Apache2"
+
+    - name: Checking Asterisk1 status
+      command: service asterisk status 
+      register: Asterisk1stat
+      when: inventory_hostname == "Asterisk1"
+
+    - debug:
+        msg: "{{Asterisk1stat.stdout}}"
+      when: inventory_hostname == "Asterisk1"
+
+    - name: Checking Asterisk2 status
+      command: service asterisk status 
+      register: Asterisk2stat
+      when: inventory_hostname == "Asterisk2"
+
+    - debug:
+        msg: "{{Asterisk2stat.stdout}}"
+      when: inventory_hostname == "Asterisk2"
+
+    - name: Checking Ftp status
+      command: service vsftpd status 
+      register: Ftpstat
+      when: inventory_hostname == "ftpserver"
+
+    - debug:
+        msg: "{{Ftpstat.stdout}}"
+      when: inventory_hostname == "ftpserver"
+
+    - name: Checking openfire web panel
+      uri:
+        url: http://192.168.80.3:9090
+      when: inventory_hostname == "ftpserver"
+
+    - name: Checking Moodle
+      uri:
+        url: http://{{ ansible_eth2.ipv4.address }}/moodle
+      when: inventory_hostname == "HAProxy"
+
+    - name: Checking Mysql is running at Mysql1
+      mysql_db:
+        name: information_schema
+        state: present
+      when: inventory_hostname == "Mysql1"
+
+    - name: Checking Mysql is running at Mysql2
+      mysql_db:
+        name: information_schema
+        state: present
+      when: inventory_hostname == "Mysql2"
+
+    - name: Checking LDAP status
+      command: service slapd status 
+      register: ldapstat
+      when: inventory_hostname == "ldap"
+
+    - debug:
+        msg: "{{ldapstat.stdout}}"
+      when: inventory_hostname == "ldap"
+
+    - debug:
+        msg: "If no errors have been shown implies that all services are up and running correctly. To access read README.md and use the following IP: {{ ansible_eth2.ipv4.address }} "
+      when: inventory_hostname == "HAProxy"
