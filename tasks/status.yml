@@ -89,5 +89,5 @@
       when: inventory_hostname == "ldap"
 
     - debug:
-        msg: "If no errors have been shown implies that all services are up and running correctly. To access read README.md and use the following IP: {{ ansible_eth2.ipv4.address }} "
+        msg: "If no errors have been shown this implies that all services are up and running correctly. To access read README.md and use the following IP: {{ ansible_eth2.ipv4.address }} "
       when: inventory_hostname == "HAProxy"
