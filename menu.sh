@@ -8,7 +8,7 @@ echo "2. Basic LAMP + Moodle + LDAP"
 echo "3. Basic LAMP + Moodle + LDAP + FTP/Openfire"
 echo "4. Give me everything ;)"
 echo "5. Salir"
-echo -n "Seleccione una opcion [1 - 5]"
+echo -n "Choose an option [1 - 5]"
 read opcion
 case $opcion in
 1) echo "Creating 1. Basic LAMP (HAProxy, Apache, MySQL)";
