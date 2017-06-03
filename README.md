@@ -12,7 +12,8 @@ During the installation ansible will prompt a series of variables for futher cus
       
       cd Ansible-Network
       
-      sh start.sh
+      sh menu.sh
+      
       
 # How to access:
 
