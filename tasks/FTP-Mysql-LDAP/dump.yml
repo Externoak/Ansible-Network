@@ -1,0 +1,30 @@
+---
+- hosts: Mysql2
+  become: true
+
+  vars_prompt:
+
+    - name: "BDDNAME"
+      prompt: "Enter database name you wish to export "
+      private: no
+
+    - name: "SQLPATH"
+      prompt: "Enter destination directory (Absolute path)"
+      private: no
+
+  tasks:
+
+    - name: Dump all databases to hostname.sql
+      mysql_db:
+        state: dump
+        name: "{{ BDDNAME  }}"
+        target: /tmp/{{ inventory_hostname }}.sql
+
+
+    - fetch:
+        src: /tmp/{{ inventory_hostname }}.sql
+        dest: "{{ SQLPATH }}/"
+        flat: yes
+
+    - debug:
+        msg: "File can be found at {{ SQLPATH }}/ with filename {{ inventory_hostname }}.sql"
